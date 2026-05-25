@@ -2,55 +2,183 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>מוריד סרטונים מקצועי</title>
+    <title>מוריד מדיה מתקדמת בענן</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #f4f4f9; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: inline-block; width: 400px; }
-        input, select { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; }
-        button { width: 95%; padding: 12px; background: #e62117; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
-        #loader { display: none; margin: 20px; color: #555; }
-        #out { margin-top: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 30px; text-align: center; }
+        .box { background: white; max-width: 600px; margin: 0 auto 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        input, select { width: 70%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px; font-size: 15px; }
+        button { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; }
+        button.success { background: #28a745; width: 100%; margin-top: 15px; font-size: 18px; }
+        .cart-item { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; text-align: right; }
+        .badge { background: #e62117; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .badge.audio { background: #ffc107; color: black; }
+        #loader { display: none; font-weight: bold; margin: 15px; color: #555; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>YouTube Downloader</h2>
-        <input type="text" id="url" placeholder="הדבק לינק כאן...">
-        <select id="mediaType">
-            <option value="video">וידאו (MP4)</option>
-            <option value="audio">אודיו (MP3/Webm)</option>
-        </select>
-        <button onclick="go()">הורד עכשיו</button>
-        <div id="loader">טוען נתונים...</div>
-        <div id="out"></div>
+
+    <div class="box">
+        <h2>🛒 מוריד סרטונים ופלייליסטים עם עגלת קניות</h2>
+        <input type="text" id="linkInput" placeholder="הדבק לינק לסרטון או פלייליסט מיוטיוב...">
+        <button onclick="parseLink()">בדוק לינק</button>
+        <div id="loader">הענן של גוגל מנתח את הקישור...</div>
+    </div>
+
+    <div class="box" id="resultsBox" style="display: none;">
+        <h3 id="resultsTitle">תוצאות סריקה:</h3>
+        <div style="margin-bottom: 15px;">
+            <label>בחר פורמט גלובלי לפריטים אלו:</label>
+            <select id="globalFormat">
+                <option value="video">וידאו (MP4)</option>
+                <option value="audio">אודיו (MP3)</option>
+            </select>
+        </div>
+        <div id="linksList" style="max-height: 200px; overflow-y: auto; text-align: right; margin-bottom: 15px;"></div>
+        <button onclick="addSelectedToCart()" style="background: #20c997;">➕ הוסף את המסומנים לעגלת הקניות</button>
+    </div>
+
+    <div class="box" id="cartBox" style="display: none;">
+        <h3>📦 עגלת הקניות שלך (<span id="cartCount">0</span> פריטים)</h3>
+        <div id="cartItems"></div>
+        <button class="success" id="downloadBtn" onclick="downloadCart()">🎁 ארוז הכל לקובץ ZIP אחד והורד</button>
     </div>
 
     <script>
-        async function go() {
-            const url = document.getElementById('url').value;
-            const type = document.getElementById('mediaType').value;
-            const out = document.getElementById('out');
-            const loader = document.getElementById('loader');
+        // הכתובת הקבועה של ה-Google Colab שלך
+        const SERVER_URL = "https://my-super-downloader.loca.lt";
+        
+        let currentScannedVideos = []; // רשימה זמנית מסריקה אחרונה
+        let cart = []; // עגלת הקניות הראשית
+
+        async function parseLink() {
+            const url = document.getElementById('linkInput').value;
+            if(!url) return alert("נא להזין לינק תקין");
             
-            out.innerHTML = "";
+            const loader = document.getElementById('loader');
+            const resultsBox = document.getElementById('resultsBox');
+            const linksList = document.getElementById('linksList');
+            
             loader.style.display = "block";
+            resultsBox.style.display = "none";
+            linksList.innerHTML = "";
             
             try {
-                // עדכן כאן את הלינק שלך מהטרמינל!
-                const res = await fetch(`https://cool-months-run.loca.lt/download?url=${encodeURIComponent(url)}&type=${type}`);
+                const res = await fetch(`${SERVER_URL}/parse?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
                 loader.style.display = "none";
                 
-                if(data.download_url) {
-                    out.innerHTML = `<h3>${data.title}</h3>
-                                     <img src="${data.thumbnail}" width="200" style="border-radius:10px;"><br><br>
-                                     <a href="${data.download_url}" download target="_blank" style="text-decoration:none; background:#28a745; color:white; padding:10px 20px; border-radius:5px;">לחץ להורדה</a>`;
-                } else {
-                    out.innerHTML = `<p style="color:red;">שגיאה: ${data.error || 'נא לבדוק שהטרמינל פתוח'}</p>`;
-                }
+                if (data.error) return alert("שגיאה בניתוח הלינק: " + data.error);
+                
+                currentScannedVideos = data.videos;
+                document.getElementById('resultsTitle').innerText = data.type === 'playlist' ? `פלייליסט: ${data.title}` : "סרטון בודד נמצא!";
+                
+                // יצירת רשימת צ'קבוקסים
+                currentScannedVideos.forEach((vid, index) => {
+                    linksList.innerHTML += `
+                        <div style="padding: 5px 0;">
+                            <input type="checkbox" id="vid_${index}" checked style="width: auto; margin-left: 10px;">
+                            <label for="vid_${index}">${vid.title}</label>
+                        </div>
+                    `;
+                });
+                
+                resultsBox.style.display = "block";
             } catch(e) {
                 loader.style.display = "none";
-                out.innerText = "שגיאה בחיבור לשרת במחשב.";
+                alert("שגיאה בתקשורת עם השרת של גוגל. וודא שחלונית ה-Colab רצה והאישור הראשוני בוצע!");
+            }
+        }
+
+        function addSelectedToCart() {
+            const format = document.getElementById('globalFormat').value;
+            
+            currentScannedVideos.forEach((vid, index) => {
+                const checkbox = document.getElementById(`vid_${index}`);
+                if (checkbox && checkbox.checked) {
+                    // מונע כפילויות בעגלה לפי ה-ID של הסרטון
+                    if (!cart.some(item => item.id === vid.id)) {
+                        cart.push({
+                            id: vid.id,
+                            title: vid.title,
+                            url: vid.url,
+                            type: format
+                        });
+                    }
+                }
+            });
+            
+            document.getElementById('resultsBox').style.display = "none";
+            document.getElementById('linkInput').value = ""; // מאפס את שורת הלינק לפעם הבאה
+            renderCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+        function renderCart() {
+            const cartBox = document.getElementById('cartBox');
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            
+            cartItems.innerHTML = "";
+            cartCount.innerText = cart.length;
+            
+            if(cart.length === 0) {
+                cartBox.style.display = "none";
+                return;
+            }
+            
+            cart.forEach(item => {
+                const badgeClass = item.type === 'audio' ? 'badge audio' : 'badge';
+                const badgeText = item.type === 'audio' ? 'MP3' : 'MP4';
+                
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <span class="${badgeClass}">${badgeText}</span>
+                            <strong>${item.title}</strong>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" style="background:#dc3545; padding: 5px 10px; font-size:12px;">מחק</button>
+                    </div>
+                `;
+            });
+            
+            cartBox.style.display = "block";
+        }
+
+        async function downloadCart() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.innerText = "⚡ הענן של גוגל מוריד ואורז ל-ZIP... נא להמתין...";
+            downloadBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/bundle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cart)
+                });
+                const data = await response.json();
+                
+                if(data.zip_id) {
+                    // טריגר להורדה ישירה של ה-ZIP מהשרת של גוגל למחשב של המשתמש
+                    window.location.href = `${SERVER_URL}/download/${data.zip_id}`;
+                    downloadBtn.innerText = "הורדה החלה!";
+                    setTimeout(() => {
+                        cart = []; // מאפס עגלה אחרי הורדה מושמת
+                        renderCart();
+                        downloadBtn.innerText = "🎁 ארוז הכל לקובץ ZIP אחד והורד";
+                        downloadBtn.disabled = false;
+                    }, 3000);
+                } else {
+                    alert("שגיאה ביצירת ה-ZIP בענן.");
+                    downloadBtn.disabled = false;
+                }
+            } catch(e) {
+                alert("המערכת נכשלה באריזה.");
+                downloadBtn.disabled = false;
+                downloadBtn.innerText = "🎁 ארוז הכל לקובץ ZIP אחד והורד";
             }
         }
     </script>
