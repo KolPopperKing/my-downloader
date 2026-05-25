@@ -169,7 +169,7 @@
 
     <script>
         // הכתובת הקבועה של ה-Google Colab שלך
-       const SERVER_URL = "https://snooper-outlying-santa.ngrok-free.dev";
+        const SERVER_URL = "https://snooper-outlying-santa.ngrok-free.dev";
         
         let currentScannedVideos = []; 
         let cart = []; 
@@ -204,13 +204,17 @@
             
             try {
                 const cleanUrl = SERVER_URL.replace(/\/$/, "");
+                
+                // הוספת ה-Header המיוחד כדי לעקוף את עמוד האזהרה של Ngrok
                 const res = await fetch(`${cleanUrl}/parse?url=${encodeURIComponent(url)}`, {
                     method: "GET",
                     mode: "cors",
                     headers: {
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        "ngrok-skip-browser-warning": "69420"
                     }
                 });
+                
                 const data = await res.json();
                 loader.style.display = "none";
                 
@@ -231,9 +235,8 @@
                 resultsBox.style.display = "block";
             } catch(e) {
                 loader.style.display = "none";
-                // במידה והדפדפן חוסם, פותחים חלון אישור זמני שמפעיל את הפרוקסי של גוגל
-                alert("נדרש אישור אבטחה מהדפדפן מול גוגל ענן.\nבחלון החדש שייפתח, ודא שאתה רואה הודעת 'Alive', ואז תחזור לכאן ותלחץ שוב על כפתור הבדיקה!");
-                window.open(`${SERVER_URL}/parse?url=${encodeURIComponent(url)}`, '_blank');
+                alert("המערכת לא הצליחה לתקשר עם השרת בקולאב. ודא שהתא בקולאב רץ!");
+                console.error(e);
             }
         }
 
@@ -256,7 +259,7 @@
                 }
             });
             
-            if(addedAny) playPopSound(); // השמעת צליל הפידבק החדש
+            if(addedAny) playPopSound(); 
             
             document.getElementById('resultsBox').style.display = "none";
             document.getElementById('linkInput').value = ""; 
@@ -306,11 +309,13 @@
             
             try {
                 const cleanUrl = SERVER_URL.replace(/\/$/, "");
-                // שינוי ה-Content-Type ל-text/plain עוקף לחלוטין בקשות Preflight OPTIONS וחוסך שגיאות CORS
+                
+                // הוספת ה-Header של האזהרה גם לבקשת ה-POST
                 const response = await fetch(`${cleanUrl}/bundle`, {
                     method: 'POST',
                     headers: { 
-                        'Content-Type': 'text/plain'
+                        'Content-Type': 'text/plain',
+                        'ngrok-skip-browser-warning': "69420"
                     },
                     body: JSON.stringify(cart)
                 });
