@@ -4,15 +4,129 @@
     <meta charset="UTF-8">
     <title>מוריד מדיה מתקדמת בענן</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 30px; text-align: center; }
-        .box { background: white; max-width: 600px; margin: 0 auto 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        input, select { width: 70%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px; font-size: 15px; }
-        button { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; }
-        button.success { background: #28a745; width: 100%; margin-top: 15px; font-size: 18px; }
-        .cart-item { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; text-align: right; }
-        .badge { background: #e62117; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-        .badge.audio { background: #ffc107; color: black; }
-        #loader { display: none; font-weight: bold; margin: 15px; color: #555; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #e0e8f5; 
+            margin: 0; 
+            padding: 40px 20px; 
+            text-align: center; 
+            color: #2c3e50;
+        }
+        
+        /* עיצוב Claymorphism רך ותלת מימדי לקופסאות */
+        .box { 
+            background: #fdfdfd; 
+            max-width: 600px; 
+            margin: 0 auto 30px auto; 
+            padding: 30px; 
+            border-radius: 24px; 
+            box-shadow: 
+                inset 4px 4px 8px rgba(255,255,255,0.9),
+                inset -4px -4px 8px rgba(0,0,0,0.05),
+                8px 12px 24px rgba(163,177,198,0.4),
+                -8px -12px 24px rgba(255,255,255,0.6);
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            font-weight: 800;
+        }
+
+        /* עיצוב נפוח ורך לאינפוטים ותפריטים */
+        input, select { 
+            width: 80%; 
+            padding: 14px; 
+            border: none;
+            outline: none;
+            background: #f0f4f8;
+            border-radius: 16px; 
+            margin-bottom: 15px; 
+            font-size: 16px; 
+            box-shadow: 
+                inset 2px 2px 5px rgba(0,0,0,0.05), 
+                inset -2px -2px 5px rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            box-shadow: 
+                inset 2px 2px 5px rgba(0,0,0,0.1), 
+                0 0 0 3px rgba(0,123,255,0.2);
+        }
+
+        /* כפתורי Claymorphism בולטים בעלי צבעים רווים */
+        button { 
+            padding: 14px 28px; 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            box-shadow: 
+                inset 2px 2px 4px rgba(255,255,255,0.4),
+                inset -2px -2px 4px rgba(0,0,0,0.15),
+                0 6px 12px rgba(59,130,246,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.97);
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2);
+        }
+
+        button.success { 
+            background: #10b981; 
+            width: 100%; 
+            margin-top: 20px; 
+            font-size: 18px; 
+            box-shadow: 
+                inset 2px 2px 4px rgba(255,255,255,0.4),
+                0 6px 12px rgba(16,185,129,0.3);
+        }
+
+        /* רשימת עגלה משודרגת */
+        .cart-item { 
+            background: #f8fafc; 
+            border: 2px solid #edf2f7; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            text-align: right; 
+        }
+
+        .badge { 
+            background: #ef4444; 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .badge.audio { 
+            background: #f59e0b; 
+            color: white; 
+        }
+
+        #loader { 
+            display: none; 
+            font-weight: bold; 
+            margin: 20px; 
+            color: #4b5563; 
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
     </style>
 </head>
 <body>
@@ -20,21 +134,22 @@
     <div class="box">
         <h2>🛒 מוריד סרטונים ופלייליסטים עם עגלת קניות</h2>
         <input type="text" id="linkInput" placeholder="הדבק לינק לסרטון או פלייליסט מיוטיוב...">
+        <br>
         <button onclick="parseLink()">בדוק לינק</button>
         <div id="loader">הענן של גוגל מנתח את הקישור...</div>
     </div>
 
     <div class="box" id="resultsBox" style="display: none;">
         <h3 id="resultsTitle">תוצאות סריקה:</h3>
-        <div style="margin-bottom: 15px;">
-            <label>בחר פורמט גלובלי לפריטים אלו:</label>
-            <select id="globalFormat">
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold; margin-left: 10px;">בחר פורמט גלובלי לפריטים אלו:</label>
+            <select id="globalFormat" style="width: auto; padding: 8px;">
                 <option value="video">וידאו (MP4)</option>
                 <option value="audio">אודיו (MP3)</option>
             </select>
         </div>
-        <div id="linksList" style="max-height: 200px; overflow-y: auto; text-align: right; margin-bottom: 15px;"></div>
-        <button onclick="addSelectedToCart()" style="background: #20c997;">➕ הוסף את המסומנים לעגלת הקניות</button>
+        <div id="linksList" style="max-height: 250px; overflow-y: auto; text-align: right; margin-bottom: 20px; padding: 10px; background: #f1f5f9; border-radius: 12px;"></div>
+        <button onclick="addSelectedToCart()" style="background: #06b6d4; box-shadow: 0 6px 12px rgba(6,182,212,0.3);">➕ הוסף את המסומנים לעגלת הקניות</button>
     </div>
 
     <div class="box" id="cartBox" style="display: none;">
@@ -45,10 +160,10 @@
 
     <script>
         // הכתובת הקבועה של ה-Google Colab שלך
-        const SERVER_URL = "https://8000-m-s-kkb-euw4b0-gtvh8oupgwqi-b.europe-west4-0.prod.colab.dev/";
+        const SERVER_URL = "https://8000-m-s-kkb-euw4b0-gtvh8oupgwqi-b.europe-west4-0.prod.colab.dev";
         
-        let currentScannedVideos = []; // רשימה זמנית מסריקה אחרונה
-        let cart = []; // עגלת הקניות הראשית
+        let currentScannedVideos = []; 
+        let cart = []; 
 
         async function parseLink() {
             const url = document.getElementById('linkInput').value;
@@ -63,7 +178,15 @@
             linksList.innerHTML = "";
             
             try {
-                const res = await fetch(`${SERVER_URL}/parse?url=${encodeURIComponent(url)}`);
+                // הוספת כותרות וניקוי ה-URL כדי למנוע חסימות דפדפן פנימיות
+                const cleanUrl = SERVER_URL.replace(/\/$/, "");
+                const res = await fetch(`${cleanUrl}/parse?url=${encodeURIComponent(url)}`, {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                });
                 const data = await res.json();
                 loader.style.display = "none";
                 
@@ -72,12 +195,11 @@
                 currentScannedVideos = data.videos;
                 document.getElementById('resultsTitle').innerText = data.type === 'playlist' ? `פלייליסט: ${data.title}` : "סרטון בודד נמצא!";
                 
-                // יצירת רשימת צ'קבוקסים
                 currentScannedVideos.forEach((vid, index) => {
                     linksList.innerHTML += `
-                        <div style="padding: 5px 0;">
-                            <input type="checkbox" id="vid_${index}" checked style="width: auto; margin-left: 10px;">
-                            <label for="vid_${index}">${vid.title}</label>
+                        <div style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center;">
+                            <input type="checkbox" id="vid_${index}" checked style="width: auto; margin-left: 12px; margin-bottom: 0;">
+                            <label for="vid_${index}" style="cursor: pointer; font-size: 14px;">${vid.title}</label>
                         </div>
                     `;
                 });
@@ -85,7 +207,7 @@
                 resultsBox.style.display = "block";
             } catch(e) {
                 loader.style.display = "none";
-                alert("שגיאה בתקשורת עם השרת של גוגל. וודא שחלונית ה-Colab רצה והאישור הראשוני בוצע!");
+                alert("שגיאה בתקשורת עם השרת של גוגל.\n\nוודא שפתחת את הקישור של קולאב בלשונית נפרדת לפחות פעם אחת כדי לאשר את הגישה דפדפן!");
             }
         }
 
@@ -95,7 +217,6 @@
             currentScannedVideos.forEach((vid, index) => {
                 const checkbox = document.getElementById(`vid_${index}`);
                 if (checkbox && checkbox.checked) {
-                    // מונע כפילויות בעגלה לפי ה-ID של הסרטון
                     if (!cart.some(item => item.id === vid.id)) {
                         cart.push({
                             id: vid.id,
@@ -108,7 +229,7 @@
             });
             
             document.getElementById('resultsBox').style.display = "none";
-            document.getElementById('linkInput').value = ""; // מאפס את שורת הלינק לפעם הבאה
+            document.getElementById('linkInput').value = ""; 
             renderCart();
         }
 
@@ -140,7 +261,7 @@
                             <span class="${badgeClass}">${badgeText}</span>
                             <strong>${item.title}</strong>
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" style="background:#dc3545; padding: 5px 10px; font-size:12px;">מחק</button>
+                        <button onclick="removeFromCart('${item.id}')" style="background:#ef4444; padding: 6px 12px; font-size:13px; box-shadow: 0 4px 8px rgba(239,68,68,0.2);">מחק</button>
                     </div>
                 `;
             });
@@ -154,19 +275,22 @@
             downloadBtn.disabled = true;
             
             try {
-                const response = await fetch(`${SERVER_URL}/bundle`, {
+                const cleanUrl = SERVER_URL.replace(/\/$/, "");
+                const response = await fetch(`${cleanUrl}/bundle`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(cart)
                 });
                 const data = await response.json();
                 
                 if(data.zip_id) {
-                    // טריגר להורדה ישירה של ה-ZIP מהשרת של גוגל למחשב של המשתמש
-                    window.location.href = `${SERVER_URL}/download/${data.zip_id}`;
+                    window.location.href = `${cleanUrl}/download/${data.zip_id}`;
                     downloadBtn.innerText = "הורדה החלה!";
                     setTimeout(() => {
-                        cart = []; // מאפס עגלה אחרי הורדה מושמת
+                        cart = []; 
                         renderCart();
                         downloadBtn.innerText = "🎁 ארוז הכל לקובץ ZIP אחד והורד";
                         downloadBtn.disabled = false;
