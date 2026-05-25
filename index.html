@@ -1,0 +1,12 @@
+<input type="text" id="url" placeholder="הדבק לינק כאן">
+<button onclick="go()">הורד</button>
+<div id="out"></div>
+<script>
+    async function go() {
+        const url = document.getElementById('url').value;
+        // שים לב: כאן תכניס את הלינק של השרת מ-Render שקיבלת בשלב הקודם
+        const r = await fetch("https://my-downloader-kbyg.onrender.com/download?url=" + encodeURIComponent(url));
+        const d = await r.json();
+        document.getElementById('out').innerHTML = `<a href="${d.download_url}" target="_blank">לחץ להורדה</a>`;
+    }
+</script>
