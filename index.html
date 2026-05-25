@@ -1,12 +1,35 @@
-<input type="text" id="url" placeholder="הדבק לינק כאן">
-<button onclick="go()">הורד</button>
-<div id="out"></div>
-<script>
-    async function go() {
-        const url = document.getElementById('url').value;
-        // שים לב: כאן תכניס את הלינק של השרת מ-Render שקיבלת בשלב הקודם
-        const r = await fetch("https://my-downloader-kbyg.onrender.com/download?url=" + encodeURIComponent(url));
-        const d = await r.json();
-        document.getElementById('out').innerHTML = `<a href="${d.download_url}" target="_blank">לחץ להורדה</a>`;
-    }
-</script>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>מוריד סרטונים אישי</title>
+</head>
+<body>
+    <h2>מוריד סרטונים (רץ מהמחשב שלי)</h2>
+    <input type="text" id="url" placeholder="הדבק לינק ליוטיוב כאן" style="width: 300px;">
+    <button onclick="go()">הורד</button>
+    <div id="out" style="margin-top: 20px;"></div>
+
+    <script>
+        async function go() {
+            const url = document.getElementById('url').value;
+            const out = document.getElementById('out');
+            out.innerText = "מעבד... (המחשב שלי עובד על זה)";
+            
+            try {
+                // הלינק של ה-localtunnel שלך
+                const response = await fetch("https://cool-months-run.loca.lt/download?url=" + encodeURIComponent(url));
+                const data = await response.json();
+                
+                if(data.download_url) {
+                    out.innerHTML = `<a href="${data.download_url}" target="_blank">לחץ כאן להורדה</a>`;
+                } else {
+                    out.innerText = "שגיאה: " + JSON.stringify(data);
+                }
+            } catch(e) {
+                out.innerText = "שגיאה בתקשורת עם השרת (וודא שהטרמינלים פתוחים!).";
+            }
+        }
+    </script>
+</body>
+</html>
