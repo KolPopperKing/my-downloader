@@ -13,6 +13,14 @@ app.add_middleware(
 
 @app.get("/download")
 def download(url: str):
-    with yt_dlp.YoutubeDL({'format': 'best'}) as ydl:
-        info = ydl.extract_info(url, download=False)
-        return {"download_url": info['url']}
+    # הגדרות שגורמות ל-yt-dlp להזדהות כאפליקציית אנדרואיד
+    ydl_opts = {
+        'format': 'best',
+        'extractor_args': {'youtube': {'player_client': ['android']}}
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return {"download_url": info['url']}
+    except Exception as e:
+        return {"error": "שגיאת שרת: " + str(e)}
