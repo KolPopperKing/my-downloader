@@ -13,7 +13,7 @@
             color: #2c3e50;
         }
         
-        /* עיצוב Claymorphism רך ותלת מימדי לקופסאות */
+        /* עיצוב Claymorphism רך לקופסאות */
         .box { 
             background: #fdfdfd; 
             max-width: 600px; 
@@ -27,7 +27,6 @@
                 -8px -12px 24px rgba(255,255,255,0.6);
         }
 
-        /* כותרת Claymorphism בולטת וחדשה */
         .main-title {
             color: #3b82f6;
             font-size: 28px;
@@ -41,7 +40,6 @@
             font-weight: 800;
         }
 
-        /* עיצוב נפוח ורך לאינפוטים ותפריטים */
         input, select { 
             width: 80%; 
             padding: 14px; 
@@ -63,7 +61,6 @@
                 0 0 0 3px rgba(0,123,255,0.2);
         }
 
-        /* כפתורי Claymorphism בולטים בעלי צבעים רווים */
         button { 
             padding: 14px 28px; 
             background: #3b82f6; 
@@ -95,7 +92,6 @@
                 0 6px 12px rgba(16,185,129,0.3);
         }
 
-        /* רשימת עגלה משודרגת */
         .cart-item { 
             background: #f8fafc; 
             border: 2px solid #edf2f7; 
@@ -174,7 +170,6 @@
         let currentScannedVideos = []; 
         let cart = []; 
 
-        // יצירת סאונד בועה (Pop) דינמי לפעולות הוספה בעגלה
         const playPopSound = () => {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
@@ -204,13 +199,10 @@
             
             try {
                 const cleanUrl = SERVER_URL.replace(/\/$/, "");
-                
-                // הוספת ה-Header המיוחד כדי לעקוף את עמוד האזהרה של Ngrok
                 const res = await fetch(`${cleanUrl}/parse?url=${encodeURIComponent(url)}`, {
                     method: "GET",
                     mode: "cors",
                     headers: {
-                        "Accept": "application/json",
                         "ngrok-skip-browser-warning": "69420"
                     }
                 });
@@ -235,7 +227,7 @@
                 resultsBox.style.display = "block";
             } catch(e) {
                 loader.style.display = "none";
-                alert("המערכת לא הצליחה לתקשר עם השרת בקולאב. ודא שהתא בקולאב רץ!");
+                alert("המערכת לא הצליחה לתקשר עם השרת בקולאב. ודא שהתא בקולאב רץ ושהכתובת SERVER_URL מעודכנת!");
                 console.error(e);
             }
         }
@@ -310,9 +302,9 @@
             try {
                 const cleanUrl = SERVER_URL.replace(/\/$/, "");
                 
-                // הוספת ה-Header של האזהרה גם לבקשת ה-POST
                 const response = await fetch(`${cleanUrl}/bundle`, {
                     method: 'POST',
+                    mode: 'cors',
                     headers: { 
                         'Content-Type': 'text/plain',
                         'ngrok-skip-browser-warning': "69420"
