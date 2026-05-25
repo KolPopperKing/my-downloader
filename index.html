@@ -3,259 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asher Media Cloud Engine</title>
+    <title>Asher Ultimate Music Organizer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.4);
+            --bg: #e8eff9;
+            --clay: #f3f7fc;
+            --primary: #2563eb;
+            --primary-light: #4f46e5;
             --success: #10b981;
             --danger: #ef4444;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
+            --text: #1e293b;
+            --text-muted: #64748b;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0; padding: 25px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* Claymorphism תלת-ממדי עתידני כהה */
-        .clay-card {
-            background: var(--surface);
-            border-radius: 28px;
-            padding: 35px;
-            width: 100%;
-            max-width: 650px;
-            box-shadow: 
-                12px 12px 30px #080d18,
-                -12px -12px 30px #1a2436,
-                inset 2px 2px 4px rgba(255, 255, 255, 0.05),
-                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            text-align: center;
-            box-sizing: border-box;
+        .clay-box {
+            background: var(--clay); border-radius: 32px; padding: 30px; width: 100%; max-width: 760px;
+            box-shadow: 10px 10px 22px #cbd5e1, -10px -10px 22px #ffffff, inset 3px 3px 6px rgba(255,255,255,0.7);
+            border: 2px solid #ffffff; box-sizing: border-box; margin-bottom: 25px;
         }
 
-        h1 {
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 0;
-            margin-bottom: 25px;
-        }
-
-        /* שדות קלט בסגנון מעומק */
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-
+        h1 { font-size: 28px; font-weight: 900; text-align: center; color: var(--primary); margin: 0 0 20px 0; }
+        
+        .input-group { display: flex; gap: 12px; margin-bottom: 15px; }
         input[type="text"], select {
-            flex-grow: 1;
-            padding: 14px 18px;
-            border: none;
-            outline: none;
-            background: #111827;
-            color: var(--text);
-            border-radius: 16px;
-            font-size: 15px;
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.4), inset -1px -1px 2px rgba(255,255,255,0.05);
-            transition: all 0.3s ease;
+            padding: 14px 18px; border: none; outline: none; background: #e2eaf5;
+            color: var(--text); border-radius: 18px; font-size: 15px; font-weight: 600;
+            box-shadow: inset 3px 3px 6px #b8c9df, inset -3px -3px 6px #ffffff; flex-grow: 1;
         }
 
-        input[type="text"]:focus {
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.5), 0 0 0 3px var(--primary-glow);
+        /* מגרש העלאת קבצים מקומיים (Upload Dropzone) */
+        .upload-zone {
+            border: 3px dashed #b8c9df; padding: 20px; border-radius: 22px; text-align: center;
+            background: rgba(255,255,255,0.3); cursor: pointer; transition: 0.2s; font-weight: 700; color: var(--text-muted);
         }
+        .upload-zone:hover { background: rgba(255,255,255,0.6); border-color: var(--primary); color: var(--primary); }
 
-        /* כפתורי קליי תלת-ממדיים קופצים */
         .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            color: white;
-            transition: all 0.2s ease;
-            box-shadow: 
-                inset 2px 2px 4px rgba(255,255,255,0.2),
-                inset -2px -2px 4px rgba(0,0,0,0.3),
-                0 4px 10px rgba(0,0,0,0.2);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
+            padding: 14px 24px; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 15px;
+            color: white; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+            box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3), 3px 6px 12px rgba(163,177,198,0.4); transition: 0.1s ease;
         }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); width: 100%; font-size: 17px; padding: 16px; margin-top: 15px;}
+        .btn-danger { background: var(--danger); padding: 8px 12px; border-radius: 12px; }
+        .btn:active { transform: scale(0.97); box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2); }
 
-        .btn-primary { background: var(--primary); }
-        .btn-success { background: var(--success); width: 100%; font-size: 17px; padding: 16px; }
-        .btn-danger { background: var(--danger); padding: 8px 14px; border-radius: 10px; font-size: 12px; }
-        .btn-secondary { background: #475569; }
-
-        .btn:hover { transform: translateY(-2px); }
-        .btn:active { 
-            transform: translateY(2px); 
-            box-shadow: inset 4px 4px 8px rgba(0,0,0,0.4), inset -2px -2px 4px rgba(255,255,255,0.05);
-        }
-
-        /* עגלת קניות צפה קבועה על המסך */
+        /* סרגל עגלה צף */
         #cartToggle {
-            position: fixed; bottom: 35px; left: 35px; width: 70px; height: 70px; border-radius: 22px;
-            background: var(--primary); color: white; font-size: 24px; display: flex; align-items: center;
-            justify-content: center; cursor: pointer; z-index: 1000;
-            box-shadow: 0 10px 25px var(--primary-glow), inset 2px 2px 4px rgba(255,255,255,0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: fixed; bottom: 30px; left: 30px; width: 75px; height: 75px; border-radius: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; font-size: 26px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000;
+            box-shadow: 5px 10px 20px rgba(59,130,246,0.3); border: 2px solid #ffffff;
         }
+        #cartBadge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; padding: 4px 9px; font-size: 12px; font-weight: bold; border: 2px solid #ffffff; }
 
-        #cartToggle:hover { transform: scale(1.1); }
-        #cartBadge { 
-            position: absolute; top: -7px; right: -7px; background: var(--danger); 
-            color: white; border-radius: 50%; padding: 4px 9px; font-size: 12px; font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+        #cartOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(224,232,245,0.6); display: none; z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
+        .modal-content { max-height: 85vh; overflow-y: auto; width: 95%; max-width: 740px; }
 
-        /* חלונית פופ-אפ צפה (Modal Overlay) */
-        #cartOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75);
-            display: none; z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px);
-        }
-
-        .modal-content {
-            width: 95%; max-width: 680px; max-height: 85vh; overflow-y: auto;
-            animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        }
-
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* שורת כלי החלה מרוכזים (Bulk) */
-        .bulk-bar {
-            background: #111827; padding: 15px; border-radius: 18px; margin-bottom: 20px;
-            display: flex; gap: 10px; align-items: center; justify-content: space-between;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
-        }
-
-        /* פריטי השירים בתוך הרשימה */
+        /* כרטיס שיר מתקדם בעגלה */
         .item-row {
-            background: #1e293b; border: 1px solid rgba(255,255,255,0.02);
-            padding: 16px; margin-bottom: 12px; border-radius: 18px;
-            display: flex; flex-direction: column; gap: 12px; text-align: right;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.15);
+            background: var(--clay); border: 2px solid #ffffff; padding: 18px; margin-bottom: 15px; border-radius: 22px;
+            display: flex; flex-direction: column; gap: 12px; box-shadow: 4px 6px 12px rgba(163,177,198,0.15); text-align: right;
         }
+        .item-header { display: flex; justify-content: space-between; align-items: center; }
+        .item-title { font-weight: 800; font-size: 16px; color: var(--primary); }
+        .tag-editor { display: flex; flex-wrap: wrap; gap: 10px; background: rgba(255,255,255,0.4); padding: 12px; border-radius: 16px; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05); }
+        .tag-field { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 140px; }
+        .tag-field label { font-size: 11px; font-weight: 800; color: var(--text-muted); }
+        .tag-field input { padding: 8px 12px; border: none; background: #e2eaf5; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: inset 2px 2px 4px #cbd5e1; }
 
-        .item-main { display: flex; justify-content: space-between; align-items: center; }
-        .item-title { font-weight: bold; font-size: 15px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .item-actions { display: flex; gap: 10px; width: 100%; }
-
-        #loader { display: none; font-weight: bold; color: var(--primary); margin: 20px 0; font-size: 15px; }
-        .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 8px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #loader { display: none; font-weight: 800; color: var(--primary); text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="clay-card">
-        <h1><i class="fa-solid fa-cloud-arrow-down" style="margin-left: 10px;"></i> Asher Media Cloud Engine</h1>
+    <div class="clay-box">
+        <h1><i class="fa-solid fa-music"></i> Asher Music Workspace v5.0</h1>
+        
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="הדבק כאן לינק לסרטון או פלייליסט מיוטיוב...">
-            <button class="btn btn-primary" onclick="scan()"><i class="fa-solid fa-magnifying-glass"></i> סרוק קישור</button>
+            <input type="text" id="urlInput" placeholder="הדבק לינק מיוטיוב (סרטון או פלייליסט שלם)...">
+            <button class="btn btn-primary" onclick="scan()"><i class="fa-solid fa-plus"></i> משוך לעגלה</button>
         </div>
-        <div id="loader"><span class="spinner"></span>הענן מנתח ומפרק את הקישור... נא להמתין</div>
+
+        <div style="text-align: center; margin: 15px 0; font-weight: 800; color: var(--text-muted);">— או —</div>
+
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+            לחץ או גרור קובצי שמע (MP3/MP4) קיימים מהמחשב שלך לכאן
+            <input type="file" id="fileInput" multiple style="display: none;" onchange="uploadFiles(this.files)">
+        </div>
+
+        <div id="loader"><i class="fa-solid fa-spinner fa-spin"></i> מעבד נתוני מדיה...</div>
     </div>
 
     <div id="cartToggle" onclick="toggleCart()">
-        <i class="fa-solid fa-folder-open"></i>
+        <i class="fa-solid fa-compact-disc"></i>
         <span id="cartBadge">0</span>
     </div>
 
     <div id="cartOverlay" onclick="if(event.target == this) toggleCart()">
-        <div class="clay-card modal-content">
+        <div class="clay-box modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; font-size: 22px; color: var(--primary);"><i class="fa-solid fa-list-check"></i> ניהול תור ההורדות שלך</h2>
-                <button class="btn btn-secondary" onclick="toggleCart()" style="padding: 6px 12px; border-radius: 10px;">סגור</button>
+                <h2 style="margin:0; font-size: 22px; font-weight:900; color:var(--primary);"><i class="fa-solid fa-sliders"></i> ניהול ואוצרות חבילת מוזיקה</h2>
+                <button class="btn btn-primary" onclick="toggleCart()" style="padding: 8px 16px; border-radius: 12px; font-size: 13px;">סגור</button>
             </div>
 
-            <div class="bulk-bar">
-                <span style="font-size: 13px; font-weight: bold; color: var(--text-muted);">החל על כולם:</span>
-                <select id="bulkType" style="padding: 6px; font-size: 13px;">
-                    <option value="audio">MP3 (אודיו + קאבר)</option>
-                    <option value="video">MP4 (וידאו מלא)</option>
-                </select>
-                <input type="text" id="bulkFolder" placeholder="שם תיקייה מרוכזת..." style="padding: 6px; font-size: 13px; width: 140px;">
-                <button class="btn btn-primary" onclick="applyBulk()" style="padding: 8px 14px; font-size: 12px;"><i class="fa-solid fa-wand-magic-sparkles"></i> עדכן הכל</button>
-            </div>
+            <div id="cartList" style="max-height: 52vh; overflow-y: auto; margin-bottom: 15px; padding-left: 5px;"></div>
 
-            <div id="cartList" style="max-height: 45vh; overflow-y: auto; margin-bottom: 20px; padding-left: 5px;"></div>
-
-            <button class="btn btn-success" id="dlBtn" onclick="startDownload()"><i class="fa-solid fa-box-archive"></i> ארוז מבנה תיקיות והורד קובץ ZIP</button>
+            <button class="btn btn-success" id="dlBtn" onclick="startDownload()"><i class="fa-solid fa-download"></i> תקן תגיות, סדר בתיקיות והורד ZIP</button>
         </div>
     </div>
 
     <script>
-        // !!! ודא שאתה מעדכן את הכתובת הזו בכל הפעלה מחדש של קולאב !!!
-        const SERVER_URL = "https://all-hairs-clean.loca.lt/";
+        const SERVER_URL = "https://asher-media-cloud.loca.lt";
         let cart = [];
 
         async function scan() {
             const url = document.getElementById('urlInput').value;
-            if(!url) return alert("אנא הדבק לינק תקין");
+            if(!url) return;
             document.getElementById('loader').style.display = "block";
             try {
                 const res = await fetch(`${SERVER_URL}/parse?url=${encodeURIComponent(url)}`);
-                const videos = await res.json();
-                
-                if(videos.error) { alert("שגיאה מהשרת: " + videos.error); }
-                else {
-                    let addedCount = 0;
-                    videos.forEach(v => {
-                        if(!cart.some(c => c.id === v.id)) {
-                            cart.push({...v, type: 'audio', folder: ''});
-                            addedCount++;
-                        }
-                    });
-                    updateUI();
-                    toggleCart(true); // לפתוח את החלונית הצפה אוטומטית שיראה את התוצאות
-                }
-            } catch(e) { 
-                alert("המערכת לא הצליחה לגשת לשרת. ודא שפתחת את לינק ה-Localtunnel והזנת את סיסמת ה-IP!"); 
-            }
+                const data = await res.json();
+                data.forEach(v => {
+                    if(!cart.some(c => c.id === v.id)) {
+                        cart.push({ ...v, type: 'audio', folder: '', bitrate: '320', start: '', end: '', album: 'Asher Cloud' });
+                    }
+                });
+                updateUI(); toggleCart(true);
+            } catch(e) { alert("שגיאה בסריקה"); }
             document.getElementById('loader').style.display = "none";
             document.getElementById('urlInput').value = "";
+        }
+
+        async function uploadFiles(files) {
+            if(files.length === 0) return;
+            document.getElementById('loader').style.display = "block";
+            for(let file of files) {
+                const formData = new FormData();
+                formData.append("file", file);
+                try {
+                    const res = await fetch(`${SERVER_URL}/upload`, { method: 'POST', body: formData });
+                    const data = await res.json();
+                    cart.push({
+                        id: data.filename, title: data.title, uploader: 'אמן מקומי', duration: 'קובץ מקומי',
+                        source: 'local', filename: data.filename, type: 'audio', folder: 'העלאות מקומיות', bitrate: '192', start: '', end: '', album: 'הורדות שלי'
+                    });
+                } catch(e) { alert("כשילון בהעלאת קובץ " + file.name); }
+            }
+            updateUI(); toggleCart(true);
+            document.getElementById('loader').style.display = "none";
         }
 
         function updateUI() {
             document.getElementById('cartBadge').innerText = cart.length;
             const list = document.getElementById('cartList');
-            if(cart.length === 0) {
-                list.innerHTML = `<div style="color: var(--text-muted); padding: 20px;">העגלה ריקה. סרוק לינקים כדי להוסיף שירים.</div>`;
-                return;
-            }
-            
+            if(cart.length === 0) { list.innerHTML = `<div style="color:var(--text-muted); padding:20px; text-align:center; font-weight:600;">אין שירים או קבצים במארגן...</div>`; return; }
+
             list.innerHTML = cart.map((item, i) => `
                 <div class="item-row">
-                    <div class="item-main">
-                        <div class="item-title"><i class="fa-brands fa-youtube" style="color: #ef4444; margin-left: 8px;"></i> ${item.title}</div>
+                    <div class="item-header">
+                        <div>
+                            <span class="item-title">${item.title}</span>
+                            <div style="font-size:11px; color:var(--text-muted); font-weight:700; margin-top:3px;">
+                                ${item.source === 'local' ? '📁 קובץ שהועלה מהמחשב' : '🌐 קישור מיוטיוב'} | אורך: ${item.duration}
+                            </div>
+                        </div>
                         <button class="btn btn-danger" onclick="cart.splice(${i},1); updateUI();"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <div class="item-actions">
-                        <select style="width: 35%;" onchange="cart[${i}].type = this.value">
-                            <option value="audio" ${item.type==='audio'?'selected':''}>MP3 (שיר)</option>
-                            <option value="video" ${item.type==='video'?'selected':''}>MP4 (סרטון)</option>
-                        </select>
-                        <input type="text" placeholder="📁 תיקיית יעד (אופציונלי)..." value="${item.folder}" onchange="cart[${i}].folder = this.value" style="width: 65%;">
+
+                    <div class="tag-editor">
+                        <div class="tag-field"><label>שם השיר (Title)</label><input type="text" value="${item.title}" onchange="cart[${i}].title = this.value"></div>
+                        <div class="tag-field"><label>שם האמן (Artist)</label><input type="text" value="${item.uploader}" onchange="cart[${i}].uploader = this.value"></div>
+                        <div class="tag-field"><label>אלבום (Album)</label><input type="text" value="${item.album || ''}" onchange="cart[${i}].album = this.value"></div>
+                        <div class="tag-field"><label>📁 נתיב תיקייה ב-ZIP</label><input type="text" placeholder="למשל: רמיקסים..." value="${item.folder}" onchange="cart[${i}].folder = this.value"></div>
+                        <div class="tag-field" style="min-width:90px;">
+                            <label>פורמט</label>
+                            <select onchange="cart[${i}].type = this.value" style="padding:7px; font-size:12px;">
+                                <option value="audio" ${item.type==='audio'?'selected':''}>MP3</option>
+                                <option value="video" ${item.type==='video'?'selected':''}>MP4</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -266,46 +203,21 @@
             el.style.display = (forceOpen || el.style.display === 'none' || el.style.display === '') ? 'flex' : 'none';
         }
 
-        function applyBulk() {
-            const type = document.getElementById('bulkType').value;
-            const folder = document.getElementById('bulkFolder').value.trim();
-            cart.forEach(item => { item.type = type; item.folder = folder; });
-            updateUI();
-            document.getElementById('bulkFolder').value = "";
-        }
-
         async function startDownload() {
-            if(cart.length === 0) return alert("העגלה שלך ריקה!");
+            if(cart.length === 0) return;
             const btn = document.getElementById('dlBtn');
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = "<span class='spinner'></span> מנוע ענן מוריד במקביל ומסדר בתיקיות... נא להמתין";
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> מעבד תגיות, יוצר מבנה תיקיות ומוריד...";
             btn.disabled = true;
-            
+
             try {
                 const res = await fetch(`${SERVER_URL}/bundle`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain'},
-                    body: JSON.stringify(cart)
+                    method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(cart)
                 });
                 const { zip_id } = await res.json();
-                
-                // תחילת ההורדה של קובץ ה-ZIP המוכן
                 window.location.href = `${SERVER_URL}/download/${zip_id}`;
-                btn.innerHTML = "✨ ההורדה החלה בהצלחה!";
-                
-                setTimeout(() => {
-                    cart = [];
-                    updateUI();
-                    toggleCart(false);
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
-                }, 4000);
-            } catch(e) { 
-                alert("האריזה נכשלה. ודא שהתא בקולאב עדיין פעיל."); 
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
+                btn.innerHTML = "✨ הכל מוכן! ההורדה התחילה.";
+                setTimeout(() => { cart = []; updateUI(); toggleCart(false); btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-download'></i> תקן תגיות, סדר בתיקיות והורד ZIP"; }, 4000);
+            } catch(e) { alert("הארגון נכשל."); btn.disabled = false; }
         }
     </script>
 </body>
